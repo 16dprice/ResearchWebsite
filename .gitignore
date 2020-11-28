@@ -62,3 +62,8 @@ local.properties
 buildSrcTmp/
 distTmp/
 outTmp/
+
+gradlew
+gradlew.bat
+
+src/main/resources/knot_text_files
