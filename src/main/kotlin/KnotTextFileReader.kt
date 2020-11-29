@@ -13,14 +13,20 @@ class KnotTextFileReader(
     private fun getPDCodeList(): List<PDCode> {
         val pdCodes = mutableListOf<PDCode>()
 
-        knotTextFile.forEachLine { pdCode ->
-            val crossings = getCrossingsFromTextFilePDCode(pdCode).map { crossing ->
-                getCrossingFromTextFileCrossing(crossing)
+        knotTextFile.forEachLine { pdCodeTextFileString ->
+            if(isPDCodeTextFileStringValid(pdCodeTextFileString)) {
+                pdCodes.add(getPDCodeFromValidTextFileString(pdCodeTextFileString))
             }
-            pdCodes.add(PDCode(crossings))
         }
 
         return pdCodes
+    }
+
+    private fun getPDCodeFromValidTextFileString(textFileString: String): PDCode {
+        val crossings = getCrossingsFromTextFilePDCode(textFileString).map { crossing ->
+            getCrossingFromTextFileCrossing(crossing)
+        }
+        return PDCode(crossings)
     }
 
     private fun getCrossingsFromTextFilePDCode(textFilePDCode: String): List<String> {
@@ -41,5 +47,10 @@ class KnotTextFileReader(
             numericStrands[2],
             numericStrands[3]
         )
+    }
+
+    private fun isPDCodeTextFileStringValid(pdCodeTextFileString: String): Boolean {
+        if(pdCodeTextFileString.isBlank()) return false
+        return true
     }
 }
