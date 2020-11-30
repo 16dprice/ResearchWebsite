@@ -1,3 +1,5 @@
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.slf4j.LoggerFactory
@@ -6,30 +8,44 @@ import java.net.URL
 
 class KnotTextFileReaderTest {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
-    private val testFileNames = mapOf(
-        "knot_6_3.txt" to 2,
-        "knot_5_1.txt" to 1
-    )
+    private data class GetLinkListTestCase(
+        private val testFileName: String,
+        val expectedResult: Int
+    ) {
+        val testFile: File?
 
-    @Test
-    fun testGetLinkList() {
-        for((filename, expectedNumberOfLinks) in testFileNames) {
-            val testFile = getFileForLinkListTest(filename) ?: continue
+        init {
+            val testFileResource: URL? = javaClass.classLoader.getResource(
+                testFileName
+            )
 
-            val knotTextFileReader = KnotTextFileReader(testFile)
-            assertEquals(expectedNumberOfLinks, knotTextFileReader.getLinkList().size)
+            testFile = if(testFileResource == null) null else File(testFileResource.file)
         }
     }
 
-    private fun getFileForLinkListTest(filename: String): File? {
-        val fileResource: URL? = javaClass.classLoader.getResource(
-            filename
-        )
-        if(fileResource == null) {
-            logger.error("File $filename for Link List test not found.")
-            return null
+    private val logger = LoggerFactory.getLogger(javaClass)
+
+    @Test
+    fun testGetLinkList() {
+        for(testCase in getTestCasesForGetLinkList()) {
+            testCase.testFile ?: continue
+            val knotTextFileReader = KnotTextFileReader(testCase.testFile)
+            assertEquals(knotTextFileReader.getLinkList().size, testCase.expectedResult)
         }
-        return File(fileResource.file)
+    }
+
+    private fun getTestCasesForGetLinkList(): List<GetLinkListTestCase> {
+        val testCasesResource: URL? = javaClass.classLoader.getResource(
+            "KnotTextFileReader_GetLinkList_TestCases.json"
+        )
+        if(testCasesResource == null) {
+            logger.error("KnotTextFileReader JSON test file not found.")
+            return listOf()
+        }
+
+        val testCasesFile = File(testCasesResource.file)
+        return jacksonObjectMapper().readValue(
+            testCasesFile.readText()
+        )
     }
 }

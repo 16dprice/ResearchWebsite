@@ -1,0 +1,14 @@
+[
+  {
+    "testFileName": "knot_5_1.txt",
+    "expectedResult": 1
+  },
+  {
+    "testFileName": "knot_6_3.txt",
+    "expectedResult": 2
+  },
+  {
+    "testFileName": "knot_12_1.txt",
+    "expectedResult": 16
+  }
+]
