@@ -12,20 +12,5 @@ import io.ktor.routing.get
 fun Application.appModule() {
     install(DefaultHeaders)
     install(Routing) {
-        route("/") {
-            get {
-                call.respondText("hello")
-            }
-        }
-        route("/home") {
-            get {
-                call.respondText("home")
-            }
-        }
-        route("/knot") {
-            get {
-                call.respondText("knot")
-            }
-        }
     }
 }
